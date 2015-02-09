@@ -25,16 +25,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-    <ImageView
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+    <GridView
+        android:layout_centerInParent="true"
         android:id="@+id/task"
-        android:src="@drawable/task"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:clickable="true"
-        android:onClick="gotoFeedback"/>
+        android:padding="30dp"
+        android:numColumns="3"
+        android:verticalSpacing="20dp"
+        android:horizontalSpacing="10dp"
+        android:gravity="center"
+        android:visibility="gone"/>
     <ImageView
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"

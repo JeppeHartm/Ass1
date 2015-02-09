@@ -2,19 +2,22 @@ package com.bestapps.jeppe.testapp;
 
 import com.bestapps.jeppe.testapp.util.SystemUiHider;
 
-import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Semaphore;
+import java.util.Random;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -23,17 +26,27 @@ import java.util.concurrent.Semaphore;
  * @see SystemUiHider
  */
 public class TaskOOO extends Activity {
+    enum mode {
+        color,
+        shape;
+        public static mode getRandom(){
+           return values()[(int)(Math.random()*values().length)];
+        }
+    }
+    int answer = 0;
     ImageView cone,ctwo,cthree;
-    ImageView task;
+    GridView task;
     ImageView fback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_task_ooo);
         cone = (ImageView)findViewById(R.id.cone);
         ctwo = (ImageView)findViewById(R.id.ctwo);
         cthree = (ImageView)findViewById(R.id.cthree);
-        task = (ImageView) findViewById(R.id.task);
+        task = (GridView) findViewById(R.id.task);
+        task.setAdapter(new ImageAdapter(this));
         fback = (ImageView)findViewById(R.id.feedback);
         anim();
     }
@@ -84,6 +97,72 @@ public class TaskOOO extends Activity {
 
     public void gotoMain(View view) {
         this.finish();
+    }
+
+    private class ImageAdapter extends BaseAdapter {
+        int[] shapeIds;
+        int[] colors = new int[]{Color.rgb(0x84,0xc1,0xff),Color.rgb(0x88,0xaa,0x00),Color.rgb(0xff,0xcc,0x00)};
+        private Context mContext;
+        public ImageAdapter(Context c) {
+            mContext = c;
+            mThumbIds = new Drawable[9];
+            mode m = mode.color;
+            shapeIds = new int[]{R.drawable.square,R.drawable.round};
+            answer = (int)(Math.random()*9);
+            switch(m){
+                case color:
+                    int anscol = colors[0];
+                    for(int i = 0; i < 9; i++){
+                        int col;
+                        int shape = shapeIds[(int)(Math.random()*2)];
+                        if(i == answer){
+                            col = anscol;
+                        }else{
+                            col = colors[(int)(Math.random()*2 +1)];
+                        }
+                        Drawable d = getResources().getDrawable(shape);
+                        d.setColorFilter(col, PorterDuff.Mode.SRC_ATOP);
+                        mThumbIds[i] = d;
+                    }
+                    break;
+                case shape:
+
+                    break;
+            };
+
+        }
+
+        @Override
+        public int getCount() {
+            return mThumbIds.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageDrawable(mThumbIds[position]);
+            return imageView;
+        }
+
+        private Drawable[] mThumbIds;
     }
 }
 

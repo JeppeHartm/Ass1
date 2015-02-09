@@ -1,47 +1,105 @@
 package com.bestapps.jeppe.testapp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GridView gv = (GridView) findViewById(R.id.gridview);
+        gv.setAdapter(new ImageAdapter(this));
+        gv.setOnItemClickListener(new MenuItemClickListener(this));
     }
+    //This approach is "borrowed" from the developer.android.com reference for the API
+    //  it can be found at http://developer.android.com/guide/topics/ui/layout/gridview.html
+    private class MenuItemClickListener implements AdapterView.OnItemClickListener {
+        private Context mContext;
+        public MenuItemClickListener(Context c) {
+            mContext = c;
+
+        }
+        @Override
+        public void onItemClick(AdapterView<?> parent,final View view, int position, long id) {
+            Intent i = null;
+            switch (position) {
+                case 3://OOO
+                    i = new Intent(mContext,TaskOOO.class);
+                    break;
+                case 15://Eval
+                    i = new Intent(mContext,EvalActivity.class);
+                    break;
+            }
+            final Intent intent = i;
+            view.animate()
+                    .setDuration(300)
+                    .rotationBy(360f)
+                    .setInterpolator(AnimationUtils.loadInterpolator(mContext, android.R.interpolator.decelerate_cubic))
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(intent != null) startActivity(intent);
+                        }
+                    });
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    private class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+        public ImageAdapter(Context c) {
+            mContext = c;
         }
 
-        return super.onOptionsItemSelected(item);
-    }
+        @Override
+        public int getCount() {
+            return mThumbIds.length;
+        }
 
-    public void clickAction(View view) {
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
 
-        startActivity(new Intent(this,TaskOOO.class));
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageResource(mThumbIds[position]);
+            return imageView;
+        }
+
+        private Integer[] mThumbIds = {
+                R.drawable.blank, R.drawable.blank,R.drawable.blank,
+                R.drawable.ooobutton, R.drawable.blank, R.drawable.blank,
+                R.drawable.blank, R.drawable.blank, R.drawable.blank,
+                R.drawable.blank, R.drawable.blank, R.drawable.blank,
+                R.drawable.blank, R.drawable.blank, R.drawable.blank,
+                R.drawable.statbutton
+        };
     }
 }

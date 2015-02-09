@@ -22,6 +22,10 @@
             android:label="@string/title_activity_task_ooo"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".EvalActivity"
+            android:label="@string/title_activity_eval" >
+        </activity>
     </application>
 
 </manifest>
