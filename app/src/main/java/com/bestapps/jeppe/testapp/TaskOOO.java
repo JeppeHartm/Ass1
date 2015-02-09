@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -47,6 +48,7 @@ public class TaskOOO extends Activity {
         cthree = (ImageView)findViewById(R.id.cthree);
         task = (GridView) findViewById(R.id.task);
         task.setAdapter(new ImageAdapter(this));
+        task.setOnItemClickListener(new TaskClickListener(this));
         fback = (ImageView)findViewById(R.id.feedback);
         anim();
     }
@@ -104,31 +106,42 @@ public class TaskOOO extends Activity {
         int[] colors = new int[]{Color.rgb(0x84,0xc1,0xff),Color.rgb(0x88,0xaa,0x00),Color.rgb(0xff,0xcc,0x00)};
         private Context mContext;
         public ImageAdapter(Context c) {
+            Random r = new Random();
             mContext = c;
             mThumbIds = new Drawable[9];
-            mode m = mode.color;
             shapeIds = new int[]{R.drawable.square,R.drawable.round};
-            answer = (int)(Math.random()*9);
-            switch(m){
-                case color:
-                    int anscol = colors[0];
+            answer = r.nextInt(9);
+            switch(mode.shape){
+                case shape:
                     for(int i = 0; i < 9; i++){
-                        int col;
-                        int shape = shapeIds[(int)(Math.random()*2)];
                         if(i == answer){
-                            col = anscol;
+                            Drawable d = getResources().getDrawable(R.drawable.square).getConstantState().newDrawable();
+                            d.setColorFilter(colors[0], PorterDuff.Mode.MULTIPLY);
+                            mThumbIds[i] = d;
                         }else{
-                            col = colors[(int)(Math.random()*2 +1)];
+
+                            Drawable d = getResources().getDrawable(R.drawable.round).getConstantState().newDrawable();
+                            d.setColorFilter(colors[0], PorterDuff.Mode.MULTIPLY);
+                            mThumbIds[i] = d;
                         }
-                        Drawable d = getResources().getDrawable(shape);
-                        d.setColorFilter(col, PorterDuff.Mode.SRC_ATOP);
-                        mThumbIds[i] = d;
+
                     }
                     break;
-                case shape:
+                case color:
+                    for(int i = 0; i < 9; i++){
+                        if(i == answer){
+                            Drawable d = getResources().getDrawable(shapeIds[r.nextInt(2)]).getConstantState().newDrawable();
+                            d.setColorFilter(colors[2], PorterDuff.Mode.MULTIPLY);
+                            mThumbIds[i] = d;
+                        }else{
+                            Drawable d = getResources().getDrawable(shapeIds[r.nextInt(2)]).getConstantState().newDrawable();
+                            d.setColorFilter(colors[0], PorterDuff.Mode.MULTIPLY);
+                            mThumbIds[i] = d;
+                        }
 
+                    }
                     break;
-            };
+            }
 
         }
 
@@ -163,6 +176,19 @@ public class TaskOOO extends Activity {
         }
 
         private Drawable[] mThumbIds;
+    }
+
+    private class TaskClickListener implements AdapterView.OnItemClickListener {
+        Context con;
+        public TaskClickListener(Context c){
+            con = c;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(answer == position) gotoFeedback(parent);
+            else ((GridView)parent).setAdapter(new ImageAdapter(con));
+        }
     }
 }
 
