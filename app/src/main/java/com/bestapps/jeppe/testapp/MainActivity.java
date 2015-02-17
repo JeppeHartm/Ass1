@@ -13,7 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
-
+    boolean ready = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +33,8 @@ public class MainActivity extends Activity {
         }
         @Override
         public void onItemClick(AdapterView<?> parent,final View view, int position, long id) {
+            if(!ready) return;
+            ready = false;
             Intent i = null;
             switch (position) {
                 case 3://OOO
@@ -51,6 +53,7 @@ public class MainActivity extends Activity {
                         @Override
                         public void run() {
                             if(intent != null) startActivity(intent);
+                            ready = true;
                         }
                     });
 

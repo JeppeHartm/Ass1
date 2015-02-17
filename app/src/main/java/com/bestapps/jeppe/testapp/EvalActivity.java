@@ -2,43 +2,84 @@ package com.bestapps.jeppe.testapp;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.Image;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 
 public class EvalActivity extends Activity {
-    ImageView stats1,stats2,indicator;
+    ImageView stats1,stats2,stats3,indicator;
+    static int active = 3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eval);
         stats1 = (ImageView)findViewById(R.id.stats1);
         stats2 = (ImageView)findViewById(R.id.stats2);
+        stats3 = (ImageView)findViewById(R.id.stats3);
         indicator = (ImageView)findViewById(R.id.indicator);
-        stats1.setOnTouchListener(new OnSwipeTouchListener(this) {
+        OnSwipeTouchListener ostl = new OnSwipeTouchListener(this) {
+            public void setAllGone(){
+                if(stats1.getVisibility()!=View.GONE)stats1.setVisibility(View.GONE);
+                if(stats2.getVisibility()!=View.GONE)stats2.setVisibility(View.GONE);
+                if(stats3.getVisibility()!=View.GONE)stats3.setVisibility(View.GONE);
+            }
+            public void changeToScr(int scr){
+                setAllGone();
+                switch(scr){
+                    case 1:
+                        stats1.setVisibility(View.VISIBLE);
+                        indicator.setImageResource(R.drawable.so2);
+                        active = 1;
+                        break;
+                    case 2:
+                        stats2.setVisibility(View.VISIBLE);
+                        indicator.setImageResource(R.drawable.so3);
+                        active = 2;
+                        break;
+                    case 3:
+                        stats3.setVisibility(View.VISIBLE);
+                        indicator.setImageResource(R.drawable.so1);
+                        active = 3;
+                        break;
+
+                }
+            }
+
             @Override
             public void onSwipeLeft() {
-                stats1.setVisibility(View.GONE);
-                stats2.setVisibility(View.VISIBLE);
-                indicator.setImageResource(R.drawable.so2);
+                switch(active){
+                    case 1:
+                        changeToScr(3);
+                        break;
+                    case 2:
+                        changeToScr(1);
+                        break;
+                    case 3:
+                        break;
+                }
+
             }
-        });
-        stats2.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeRight() {
-                stats2.setVisibility(View.GONE);
-                stats1.setVisibility(View.VISIBLE);
-                indicator.setImageResource(R.drawable.so1);
+                switch(active){
+                    case 1:
+                        changeToScr(2);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        changeToScr(1);
+                        break;
+                }
             }
-        });
+        };
+        stats1.setOnTouchListener(ostl);
+        stats2.setOnTouchListener(ostl);
+        stats3.setOnTouchListener(ostl);
+        //changeToScr(active.stats3);
     }
 
     //borrowed an easy to use swipe listener from http://stackoverflow.com/questions/4139288/android-how-to-handle-right-to-left-swipe-gestures
